@@ -1,0 +1,2 @@
+
+{"code":0,"msg":"","count":1000,"data":[{"id":10000,"name":"付伟琪","sex":"男","studentid":"2018212204","major":"软件工程","college":"大数据与软件学院","tel":1760236666,"teacher":"李婷"},{"id":10000,"name":"张林康","sex":"男","studentid":"2018212209","major":"软件工程","college":"大数据与软件学院","tel":1760236666,"teacher":"李婷"}]}
