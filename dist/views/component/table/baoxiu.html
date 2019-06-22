@@ -4,7 +4,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>学生管理</title>
+  <title>报修管理</title>
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
@@ -38,7 +38,7 @@
             
             <script type="text/html" id="test-table-operate-barDemo">
               <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-              <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+              <a class="layui-btn layui-btn-xs" lay-event="edit">保存</a>
               <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
           </div>
@@ -56,22 +56,49 @@
   }).use(['index', 'table'], function(){
     var table = layui.table
     ,admin = layui.admin;
-  
+  var zhi={
+  	"code":0,
+  	"msg":"",
+  	"count":1000,
+  	"data":[{
+  		"id":10000,
+  		"name":"汇江书院",
+  		"slogan":"欢迎来到汇江书院大家庭",
+  		"group":"158849635",
+  		"department":"A13",
+  		},{
+  		"id":10001,
+  		"name":"花果书院",
+  		"slogan":"欢迎来到花果书院",
+  		"group":"158849635",
+  		"department":"A8",
+  		},{
+  		"id":10001,
+  		"name":"花果书院",
+  		"slogan":"欢迎来到花果书院",
+  		"group":"158849635",
+  		"department":"A11",
+  		},{
+  		"id":10001,
+  		"name":"花果书院",
+  		"slogan":"欢迎来到花果书院",
+  		"group":"158849635",
+  		"department":"A12",
+  		}]
+  	}
     table.render({
       elem: '#test-table-operate'
-      ,url: layui.setter.base + 'json/table/user.js'
+      ,data: zhi.data
       ,cellMinWidth:80
       ,height: 'full-200'
       ,cols: [[
         {type:'checkbox', fixed: 'left'}
         ,{field:'id', width:80, title: 'ID', sort: true, fixed: 'left'}
-        ,{field:'studentid', width:120, title: '学号',sort: true}
-        ,{field:'name', width:100, title: '名字'}
-        ,{field:'sex', width:70, title: '性别'}
-        ,{field:'major', width: 160, title: '专业'}
-        ,{field:'college', width:200, title: '学院'}
-        ,{field:'tel', width:135, title: '电话'}
-        ,{field:'teacher', width:80, title: '辅导员'}
+        ,{field:'name', width:120, title: '名字',edit: 'text'}
+        ,{field:'content', width: 160, title: '报修说明',edit: 'text'}
+        ,{field:'time', width:100, title: '报修时间',edit: 'text'}
+         ,{field:'room', minWidth:120, title: '报修房间号',edit: 'text'}
+          ,{field:'phone', minWidth:120, title: '报修预留手机',edit: 'text'}
         ,{minWidth:178, align:'center', fixed: 'right', toolbar: '#test-table-operate-barDemo'}
       ]]
       ,page: true
@@ -86,6 +113,16 @@
       var data = obj.data;
       if(obj.event === 'detail'){
         layer.msg('ID：'+ data.id + ' 的查看操作');
+        layer.open({
+					    type: 2,
+					    title: '查看房间',
+					    shadeClose: false,
+					    shade: [0.3],
+					    maxmin: true, //开启最大化最小化按钮
+					   	area: ['100%', '100%'],
+					    scrollbar: false, //屏蔽滚动条
+					    content: './operate.html?fjId='+data.id
+					});
       } else if(obj.event === 'del'){
         layer.confirm('真的删除行么', function(index){
           obj.del();
