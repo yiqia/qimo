@@ -61,42 +61,6 @@
         </div>
           </div>
           <div class="layui-col-md6">
-            <div class="layui-card">
-              <div class="layui-card-header">数据统计</div>
-              <div class="layui-card-body">
-
-                <div class="layui-carousel layadmin-carousel layadmin-backlog">
-                  <div carousel-item>
-                    <ul class="layui-row layui-col-space10">
-                      <li class="layui-col-xs6">
-                        <a lay-href="app/content/comment.html" class="layadmin-backlog-body">
-                          <h3>报修条数</h3>
-                          <p><cite>66</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs6">
-                        <a lay-href="./component/table/operate.html" class="layadmin-backlog-body">
-                          <h3>学生人数</h3>
-                          <p><cite>12</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs6">
-                        <a  href="javascript:;" onclick="layer.tips('不跳转', this, {tips: 3});" class="layadmin-backlog-body">
-                          <h3>寝室房间数</h3>
-                          <p><cite>99</cite></p>
-                        </a>
-                      </li>
-                      <li class="layui-col-xs6">
-                        <a href="javascript:;" onclick="layer.tips('不跳转', this, {tips: 3});" class="layadmin-backlog-body">
-                          <h3>扣分次数</h3>
-                          <p><cite>20</cite></p>
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
           <div class="layui-col-md12">
             <div class="layui-card">
@@ -134,13 +98,17 @@
   </div>
 
   <script src="../../layuiadmin/layui/layui.js?t=1"></script>  
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
   <script>
   layui.config({
     base: '../../layuiadmin/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index','console','table'], function(){
-    var table = layui.table;
+  }).use(['index','console','table','jquery'], function(){
+    var table = layui.table
+		,$ = layui.$
+		,jquery=layui.jquery;
+		var usercookie=Cookies.get('access_token');
   	var zhi={
   	"code":0,
   	"msg":"",
@@ -172,21 +140,38 @@
   		}]
   	}
   	console.log(zhi);
-    table.render({
-      elem: '#test-table-operate'
-      ,data: zhi.data
-      ,cellMinWidth:80
-      ,height: 'full-200'
-      ,cols: [[
-        {type:'checkbox', fixed: 'left'}
-        ,{field:'id', width:80, title: 'ID', sort: true, fixed: 'left'}
-        ,{field:'syname', width:120, title: '书院名称'}
-        ,{field:'room', width:100, title: '房间号'}
-        ,{field:'branch', width:100, title: '扣除分数'}
-        ,{field:'reason', minWidth: 160, title: '扣分原因'}
-      ]]
-      ,page: true
+    $.ajax({
+    	type: 'post',
+    	url: 'http://47.100.25.71:8080/fwqzy/getKouFen',
+    	dataType:'json',
+    	data: {'cookie':usercookie},
+    	success: function (res) {
+    		if(res!=false){
+    			table.render({
+    				elem: '#test-table-operate'
+    				,data: res
+    				,cellMinWidth:80
+    				,height: 'full-200'
+    				,cols: [[
+    					{type:'checkbox', fixed: 'left'}
+    					,{field:'Id', width:80, title: 'ID', sort: true, fixed: 'left'}
+    					,{field:'name', width:120, title: '书院名称'}
+    					,{field:'room', width:100, title: '房间号'}
+    					,{field:'branch', width:100, title: '扣除分数'}
+    					,{field:'reason', minWidth: 160, title: '扣分原因'}
+    					,{field:'time', minWidth: 160, title: '扣分时间'}
+    				]]
+    				,page: true
+    			});
+    		}else{
+    			layer.msg('登录失败', {
+    				offset: '15px'
+    				,icon: 2
+    			}
+    			)}
+    	}
     });
+    
      });
   </script>
 </body>

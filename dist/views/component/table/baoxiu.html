@@ -37,8 +37,6 @@
             <table class="layui-hide" id="test-table-operate" lay-filter="test-table-operate"></table>
             
             <script type="text/html" id="test-table-operate-barDemo">
-              <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-              <a class="layui-btn layui-btn-xs" lay-event="edit">保存</a>
               <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
             </script>
           </div>
@@ -48,6 +46,8 @@
   </div>
   
   <script src="../../../layuiadmin/layui/layui.js"></script>  
+	<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
   <script>
   layui.config({
     base: '../../../layuiadmin/' //静态资源所在路径
@@ -55,7 +55,10 @@
     index: 'lib/index' //主入口模块
   }).use(['index', 'table'], function(){
     var table = layui.table
-    ,admin = layui.admin;
+    ,admin = layui.admin
+		,$ = layui.$
+		,jquery=layui.jquery;
+		var usercookie=Cookies.get('access_token');/*
   var zhi={
   	"code":0,
   	"msg":"",
@@ -63,47 +66,58 @@
   	"data":[{
   		"id":10000,
   		"name":"汇江书院",
-  		"slogan":"欢迎来到汇江书院大家庭",
-  		"group":"158849635",
-  		"department":"A13",
+  		"content":"欢迎来到汇江书院大家庭",
+  		"time":"158849635",
+  		"room":"A13",
+			"phone":"A13"
   		},{
   		"id":10001,
   		"name":"花果书院",
-  		"slogan":"欢迎来到花果书院",
-  		"group":"158849635",
-  		"department":"A8",
+  		"content":"欢迎来到花果书院",
+  		"time":"158849635",
+  		"room":"A13",
+  		"phone":"A13"
   		},{
   		"id":10001,
   		"name":"花果书院",
-  		"slogan":"欢迎来到花果书院",
-  		"group":"158849635",
-  		"department":"A11",
+  		"content":"欢迎来到花果书院",
+  		"time":"158849635",
+  		"room":"A13",
+  		"phone":"A13"
   		},{
   		"id":10001,
   		"name":"花果书院",
-  		"slogan":"欢迎来到花果书院",
-  		"group":"158849635",
-  		"department":"A12",
+  		"content":"欢迎来到花果书院",
+  		"time":"158849635",
+  		"room":"A13",
+  		"phone":"A13"
   		}]
-  	}
-    table.render({
-      elem: '#test-table-operate'
-      ,data: zhi.data
-      ,cellMinWidth:80
-      ,height: 'full-200'
-      ,cols: [[
-        {type:'checkbox', fixed: 'left'}
-        ,{field:'id', width:80, title: 'ID', sort: true, fixed: 'left'}
-        ,{field:'name', width:120, title: '名字',edit: 'text'}
-        ,{field:'content', width: 160, title: '报修说明',edit: 'text'}
-        ,{field:'time', width:100, title: '报修时间',edit: 'text'}
-         ,{field:'room', minWidth:120, title: '报修房间号',edit: 'text'}
-          ,{field:'phone', minWidth:120, title: '报修预留手机',edit: 'text'}
-        ,{minWidth:178, align:'center', fixed: 'right', toolbar: '#test-table-operate-barDemo'}
-      ]]
-      ,page: true
+  	}*/
+		$.ajax({
+			type: 'post',
+			url: 'http://47.100.25.71:8080/fwqzy/sbbx',
+			dataType:'json',
+			data: {'cookie':usercookie},
+			success: function (res) {
+				table.render({
+					elem: '#test-table-operate'
+					,data: res
+					,cellMinWidth:80
+					,height: 'full-200'
+					,cols: [[
+						{type:'checkbox', fixed: 'left'}
+						,{field:'Id', width:80, title: 'ID', sort: true, fixed: 'left'}
+						,{field:'name', width:120, title: '名字',edit: 'text'}
+						,{field:'content', minWidth: 250, title: '报修说明',edit: 'text'}
+						,{field:'time', width:100, title: '报修时间',edit: 'text'}
+						 ,{field:'room', Width:50, title: '报修房间号',edit: 'text'}
+							,{field:'phone', Width:50, title: '报修预留手机',edit: 'text'}
+						,{minWidth:178, align:'center', fixed: 'right', toolbar: '#test-table-operate-barDemo'}
+					]]
+					,page: true
+				});
+    	}
     });
-    
     //监听表格复选框选择
     table.on('checkbox(test-table-operate)', function(obj){
       console.log(obj)
@@ -125,6 +139,29 @@
 					});
       } else if(obj.event === 'del'){
         layer.confirm('真的删除行么', function(index){
+					$.ajax({
+						type: 'post',
+						url: 'http://47.100.25.71:8080/fwqzy/baoxiudel',
+						dataType:'json',
+						data: {
+							'cookie':usercookie,
+							'id':data.Id
+							},
+						success: function (res) {
+							if(res.state==1024){
+								layer.msg('删除成功', {
+									offset: '15px'
+									,icon: 1
+								})
+							}else{
+								layer.msg('删除失败', {
+									offset: '15px'
+									,icon: 2
+								})
+							}
+							
+						}
+					});
           obj.del();
           layer.close(index);
         });
